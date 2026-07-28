@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\News;
+use App\Models\PublicService;
+use App\Models\VillageProfile;
+use App\Models\VillageOfficial;
+use App\Models\VillagePotential;
+use App\Models\GalleryAlbum;
+use App\Models\GalleryMedia;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class PublicController extends Controller
+{
+    public function index()
+    {
+        $profile = VillageProfile::first();
+        $latestNews = News::with('category', 'user')->where('status', 'published')->latest()->take(3)->get();
+        $services = PublicService::where('is_active', true)->take(4)->get();
+
+        return Inertia::render('public/home', [
+            'profile' => $profile,
+            'latestNews' => $latestNews,
+            'services' => $services
+        ]);
+    }
+
+    public function profile()
+    {
+        $profile = VillageProfile::first();
+        $officials = VillageOfficial::orderBy('order')->get();
+
+        return Inertia::render('public/profile', [
+            'profile' => $profile,
+            'officials' => $officials
+        ]);
+    }
+
+    public function services()
+    {
+        $profile = VillageProfile::first();
+        $services = PublicService::where('is_active', true)->get();
+
+        return Inertia::render('public/services', [
+            'profile' => $profile,
+            'services' => $services
+        ]);
+    }
+
+    public function news(Request $request)
+    {
+        $profile = VillageProfile::first();
+        $query = News::with('category', 'user')->where('status', 'published')->latest();
+
+        if ($request->has('search')) {
+            $search = $request->query('search');
+            $query->where('title', 'like', "%{$search}%")
+                ->orWhere('content', 'like', "%{$search}%");
+        }
+
+        $news = $query->paginate(9)->withQueryString();
+
+        return Inertia::render('public/news/index', [
+            'profile' => $profile,
+            'news' => $news,
+            'filters' => $request->only(['search'])
+        ]);
+    }
+
+    public function newsDetail($slug)
+    {
+        $profile = VillageProfile::first();
+        $newsItem = News::with('category', 'user')->where('slug', $slug)->where('status', 'published')->firstOrFail();
+
+        $relatedNews = News::with('category')->where('news_category_id', $newsItem->news_category_id)
+            ->where('id', '!=', $newsItem->id)
+            ->where('status', 'published')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return Inertia::render('public/news/show', [
+            'profile' => $profile,
+            'newsItem' => $newsItem,
+            'relatedNews' => $relatedNews
+        ]);
+    }
+
+    public function potentials()
+    {
+        $profile = VillageProfile::first();
+        $potentials = VillagePotential::latest()->get();
+
+        return Inertia::render('public/potentials', [
+            'profile' => $profile,
+            'potentials' => $potentials
+        ]);
+    }
+
+    public function gallery(Request $request)
+    {
+        $profile = VillageProfile::first();
+        $albums = GalleryAlbum::has('media')->get();
+
+        $query = GalleryMedia::with('album')->latest();
+        if ($request->has('album_id') && $request->album_id !== 'all') {
+            $query->where('gallery_album_id', $request->album_id);
+        }
+
+        $media = $query->paginate(12)->withQueryString();
+
+        return Inertia::render('public/gallery', [
+            'profile' => $profile,
+            'albums' => $albums,
+            'media' => $media,
+            'currentAlbum' => $request->album_id ?? 'all'
+        ]);
+    }
+
+    public function contact()
+    {
+        $profile = VillageProfile::first();
+
+        return Inertia::render('public/contact', [
+            'profile' => $profile
+        ]);
+    }
+}

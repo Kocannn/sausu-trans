@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Models\News;
+use App\Models\GalleryMedia;
+use App\Models\VillageOfficial;
+use App\Models\PublicService;
+
 class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
@@ -31,8 +36,16 @@ class DashboardController extends Controller
                 ],
             ]);
 
+        $stats = [
+            'news_count' => News::count(),
+            'gallery_count' => GalleryMedia::count(),
+            'officials_count' => VillageOfficial::count(),
+            'services_count' => PublicService::count(),
+        ];
+
         return Inertia::render('dashboard', [
             'pendingInvitations' => $pendingInvitations,
+            'stats' => $stats,
         ]);
     }
 }

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { BookOpen, FolderGit2, LayoutGrid, Settings, Users, Newspaper, Image as ImageIcon, FileText, Store, UserCog } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -23,11 +23,48 @@ export function AppSidebar() {
         ? dashboard(page.props.currentTeam.slug)
         : '/';
 
+    const teamSlug = page.props.currentTeam ? `/${page.props.currentTeam.slug}` : '';
+
     const mainNavItems: NavItem[] = [
         {
             title: 'Dashboard',
             href: dashboardUrl,
             icon: LayoutGrid,
+        },
+        {
+            title: 'Pengaturan Desa',
+            href: '/admin/village-profile',
+            icon: Settings,
+        },
+        {
+            title: 'Aparatur Desa',
+            href: '/admin/officials',
+            icon: Users,
+        },
+        {
+            title: 'Berita & Artikel',
+            href: '/admin/news',
+            icon: Newspaper,
+        },
+        {
+            title: 'Galeri Media',
+            href: '/admin/gallery-albums',
+            icon: ImageIcon,
+        },
+        {
+            title: 'Layanan Publik',
+            href: '/admin/public-services',
+            icon: FileText,
+        },
+        {
+            title: 'Etalase Potensi',
+            href: '/admin/village-potentials',
+            icon: Store,
+        },
+        {
+            title: 'Manajemen User',
+            href: '/admin/users',
+            icon: UserCog,
         },
     ];
 
@@ -68,7 +105,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
