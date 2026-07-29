@@ -22,44 +22,54 @@ type MediaItem = {
 type Props = {
     albums: AlbumItem[];
     media: MediaItem[];
-    selectedAlbumId?: number | string;
+    selectedAlbum?: number | string;
 };
 
-export default function Index({ albums, media, selectedAlbumId }: Props) {
-    const activeAlbumId = selectedAlbumId ? String(selectedAlbumId) : (albums[0]?.id ? String(albums[0].id) : '');
+export default function Index({ albums, media, selectedAlbum }: Props) {
+    const activeAlbumId = selectedAlbum ? String(selectedAlbum) : (albums[0]?.id ? String(albums[0].id) : '');
 
-    const { data, setData, post, processing, errors, delete: destroy } = useForm({
+    const { data, setData, post, processing, errors, delete: destroy, reset } = useForm({
         gallery_album_id: activeAlbumId,
         title: '',
-        file: null as File | null,
+        files: [] as File[],
     });
 
     const [filePreview, setFilePreview] = useState<string | null>(null);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0] || null;
-        setData('file', selected);
-        if (selected && selected.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onloadend = () => setFilePreview(reader.result as string);
-            reader.readAsDataURL(selected);
+        if (selected) {
+            setData('files', [selected]);
+            if (selected.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onloadend = () => setFilePreview(reader.result as string);
+                reader.readAsDataURL(selected);
+            } else {
+                setFilePreview(null);
+            }
         } else {
+            setData('files', []);
             setFilePreview(null);
         }
     };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        if (!data.file) {
+        if (data.files.length === 0) {
             toast.error('Silakan pilih berkas foto atau video terlebih dahulu.');
+            return;
+        }
+        if (!data.gallery_album_id) {
+            toast.error('Silakan pilih album tujuan.');
             return;
         }
         post('/admin/gallery-media', {
             onSuccess: () => {
                 toast.success('Media berhasil diunggah ke galeri.');
-                setData('title', '');
-                setData('file', null);
+                reset('title', 'files');
                 setFilePreview(null);
+                const fileInput = document.getElementById('file') as HTMLInputElement;
+                if (fileInput) fileInput.value = '';
             },
         });
     };
@@ -108,17 +118,24 @@ export default function Index({ albums, media, selectedAlbumId }: Props) {
 
                         <form onSubmit={submit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="album_id" className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Pilih Album Tujuan</Label>
-                                <select
-                                    id="album_id"
-                                    className="w-full h-10 border border-slate-300 bg-white text-slate-900 px-3 py-2 text-sm focus:outline-none focus:border-amber-700"
-                                    value={data.gallery_album_id}
-                                    onChange={e => setData('gallery_album_id', e.target.value)}
-                                >
-                                    {albums.map(a => (
-                                        <option key={a.id} value={a.id}>{a.name}</option>
-                                    ))}
-                                </select>
+                                <Label htmlFor="album_id" className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Album Tujuan</Label>
+                                {selectedAlbum ? (
+                                    <div className="w-full h-10 border border-slate-300 bg-slate-50 text-slate-600 px-3 py-2 text-sm flex items-center cursor-not-allowed">
+                                        {albums.find(a => String(a.id) === String(activeAlbumId))?.name || 'Album Tidak Diketahui'}
+                                    </div>
+                                ) : (
+                                    <select
+                                        id="album_id"
+                                        className="w-full h-10 border border-slate-300 bg-white text-slate-900 px-3 py-2 text-sm focus:outline-none focus:border-amber-700"
+                                        value={data.gallery_album_id}
+                                        onChange={e => setData('gallery_album_id', e.target.value)}
+                                    >
+                                        <option value="" disabled>Pilih Album...</option>
+                                        {albums.map(a => (
+                                            <option key={a.id} value={a.id}>{a.name}</option>
+                                        ))}
+                                    </select>
+                                )}
                             </div>
 
                             <div className="space-y-2">
@@ -141,7 +158,7 @@ export default function Index({ albums, media, selectedAlbumId }: Props) {
                                     onChange={handleFileChange}
                                     className="h-10 border-slate-300 cursor-pointer text-xs"
                                 />
-                                {errors.file && <p className="text-rose-600 text-xs mt-1">{errors.file}</p>}
+                                {errors.files && <p className="text-rose-600 text-xs mt-1">{errors.files}</p>}
                             </div>
 
                             {filePreview && (

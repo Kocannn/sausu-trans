@@ -15,40 +15,32 @@ export default function Home({ profile, latestNews, services }: Props) {
         <PublicLayout>
             <Head title="Beranda" />
 
-            {/* Hero Section - Text and Image */}
-            <section className="bg-white border-b border-slate-200">
-                <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        {/* Text Content */}
-                        <div>
-                            <span className="text-sm font-medium text-slate-500 tracking-wide uppercase">Portal Informasi Desa</span>
-                            <h1 className="mt-3 text-5xl lg:text-6xl font-serif text-slate-900 leading-tight">
-                                Desa {profile?.name || 'Sausu Trans'}
-                            </h1>
-                            <p className="mt-6 text-lg text-slate-600 leading-relaxed">
-                                {profile?.tagline || 'Tata kelola transparan, inovatif, dan berpusat pada kesejahteraan masyarakat melalui layanan digital yang mudah diakses.'}
-                            </p>
-                            <div className="mt-8 flex flex-wrap gap-4">
-                                <Button asChild className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-2.5 rounded-none">
-                                    <Link href="/layanan">Jelajahi Layanan</Link>
-                                </Button>
-                                <Button asChild variant="outline" className="px-6 py-2.5 rounded-none border-slate-300 hover:bg-slate-50">
-                                    <Link href="/profil">Profil Desa</Link>
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Image */}
-
-                        <div className="hidden lg:block">
-                            <div className="relative h-96 bg-slate-200 border border-slate-200 overflow-hidden">
-                                <img
-                                    src='/hero.jpg'
-                                    alt={`Desa ${profile?.name}`}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
+            {/* Hero Section - Full Background */}
+            <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden">
+                {/* Background Image */}
+                <div 
+                    className="absolute inset-0 bg-cover bg-center z-0"
+                    style={{ backgroundImage: "url('/hero.jpg')" }}
+                ></div>
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-black/60 z-10"></div>
+                
+                {/* Content */}
+                <div className="relative z-20 max-w-6xl mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center md:text-left text-white w-full">
+                    <span className="text-sm font-bold text-amber-500 tracking-widest uppercase">Portal Informasi Desa</span>
+                    <h1 className="mt-4 text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight drop-shadow-lg">
+                        Desa {profile?.name || 'Sausu Trans'}
+                    </h1>
+                    <p className="mt-6 text-lg md:text-xl text-slate-200 leading-relaxed max-w-3xl drop-shadow">
+                        {profile?.tagline || 'Tata kelola transparan, inovatif, dan berpusat pada kesejahteraan masyarakat melalui layanan digital yang mudah diakses.'}
+                    </p>
+                    <div className="mt-10 flex flex-wrap gap-4 justify-center md:justify-start">
+                        <Button asChild className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 h-auto text-base font-semibold rounded-none border border-amber-600">
+                            <Link href="/layanan">Jelajahi Layanan</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="px-8 py-3 h-auto text-base font-semibold rounded-none bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                            <Link href="/profil">Profil Desa</Link>
+                        </Button>
                     </div>
                 </div>
             </section>

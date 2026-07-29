@@ -10,7 +10,7 @@ import LeadershipTimelineSettings from './components/LeadershipTimelineSettings'
 
 export type TimelineEntry = {
     name: string;
-    period: string;
+    period?: string;
 };
 
 export type VillageStats = {

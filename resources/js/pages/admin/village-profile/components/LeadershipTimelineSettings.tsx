@@ -5,7 +5,7 @@ import { Plus, Trash } from 'lucide-react';
 
 type TimelineEntry = {
     name: string;
-    period: string;
+    period?: string;
 };
 
 type Props = {
@@ -42,13 +42,9 @@ export default function LeadershipTimelineSettings({ data, setData }: Props) {
             <div className="space-y-4">
                 {data.leadership_timeline.map((item: TimelineEntry, index: number) => (
                     <div key={index} className="flex gap-4 items-start">
-                        <div className="flex-1">
+                        <div className="flex-[2]">
                             <Label className="text-xs">Nama Kepala Desa</Label>
                             <Input value={item.name} onChange={e => updateTimeline(index, 'name', e.target.value)} placeholder="Contoh: Bpk. Sugiono" />
-                        </div>
-                        <div className="flex-1">
-                            <Label className="text-xs">Periode Jabatan</Label>
-                            <Input value={item.period} onChange={e => updateTimeline(index, 'period', e.target.value)} placeholder="Contoh: 2010 - 2015" />
                         </div>
                         <div className="mt-6">
                             <Button type="button" variant="destructive" size="icon" onClick={() => removeTimeline(index)}>

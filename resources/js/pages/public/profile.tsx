@@ -80,7 +80,6 @@ export default function Profile({ profile, officials }: Props) {
                                             <div key={idx} className="relative">
                                                 <div className="absolute -left-[37px] top-1.5 h-3 w-3 bg-white border-2 border-amber-700"></div>
                                                 <h4 className="text-lg font-bold text-slate-900">{leader.name}</h4>
-                                                <p className="text-amber-700 font-medium text-sm mt-1">{leader.period}</p>
                                             </div>
                                         ))}
                                     </div>

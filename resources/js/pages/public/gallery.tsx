@@ -88,7 +88,7 @@ export default function Gallery({ profile, albums, media, currentAlbum }: Props)
                                         </div>
                                     )}
                                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <p className="text-white font-medium text-sm truncate">{item.title || (item.type === 'photo' ? 'Foto' : 'Video')}</p>
+                                        <p className="text-white font-medium text-sm whitespace-normal break-words">{item.title || (item.type === 'photo' ? 'Foto' : 'Video')}</p>
                                         {item.album && (
                                             <p className="text-amber-500 text-xs mt-1 font-medium">{item.album.name}</p>
                                         )}
