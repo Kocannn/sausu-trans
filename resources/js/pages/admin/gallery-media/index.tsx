@@ -1,149 +1,223 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { Head, useForm, Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash, ArrowLeft, Image as ImageIcon, PlayCircle } from 'lucide-react';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { useState, useRef } from 'react';
+import { Label } from '@/components/ui/label';
+import { Upload, Trash2, ArrowLeft, Image as ImageIcon, Video, Folder, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { FormEventHandler, useState, ChangeEvent } from 'react';
 
-export default function GalleryMediaIndex({ media, albums, selectedAlbum }: any) {
-    const { data, setData, post, processing, progress, errors, reset } = useForm({
-        gallery_album_id: selectedAlbum || '',
-        files: [] as File[],
+type AlbumItem = {
+    id: number;
+    name: string;
+};
+
+type MediaItem = {
+    id: number;
+    title: string;
+    file_path: string;
+    type: 'photo' | 'video';
+    gallery_album_id: number;
+};
+
+type Props = {
+    albums: AlbumItem[];
+    media: MediaItem[];
+    selectedAlbumId?: number | string;
+};
+
+export default function Index({ albums, media, selectedAlbumId }: Props) {
+    const activeAlbumId = selectedAlbumId ? String(selectedAlbumId) : (albums[0]?.id ? String(albums[0].id) : '');
+
+    const { data, setData, post, processing, errors, delete: destroy } = useForm({
+        gallery_album_id: activeAlbumId,
+        title: '',
+        file: null as File | null,
     });
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [filePreview, setFilePreview] = useState<string | null>(null);
 
-    const submit = (e: React.FormEvent) => {
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const selected = e.target.files?.[0] || null;
+        setData('file', selected);
+        if (selected && selected.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => setFilePreview(reader.result as string);
+            reader.readAsDataURL(selected);
+        } else {
+            setFilePreview(null);
+        }
+    };
+
+    const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        
-        if (!data.gallery_album_id) {
-            toast.error('Silakan pilih album terlebih dahulu');
+        if (!data.file) {
+            toast.error('Silakan pilih berkas foto atau video terlebih dahulu.');
             return;
         }
-
-        if (data.files.length === 0) {
-            toast.error('Pilih minimal satu file');
-            return;
-        }
-
         post('/admin/gallery-media', {
             onSuccess: () => {
-                toast.success('Media berhasil diunggah.');
-                reset('files');
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
+                toast.success('Media berhasil diunggah ke galeri.');
+                setData('title', '');
+                setData('file', null);
+                setFilePreview(null);
             },
         });
     };
 
-    const { delete: destroy } = useForm();
-
     const handleDelete = (id: number) => {
-        if (confirm('Yakin ingin menghapus media ini?')) {
+        if (confirm('Apakah Anda yakin ingin menghapus berkas media ini?')) {
             destroy(`/admin/gallery-media/${id}`, {
-                onSuccess: () => toast.success('Media berhasil dihapus.')
+                onSuccess: () => toast.success('Media berhasil dihapus.'),
             });
         }
     };
 
+    const filteredMedia = media.filter(
+        m => !activeAlbumId || String(m.gallery_album_id) === String(activeAlbumId)
+    );
+
     return (
         <>
-            <Head title="Manajemen Galeri Media" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                
-                {/* Upload Form */}
-                <div className="bg-card text-card-foreground shadow rounded-xl p-6 border border-sidebar-border/70 dark:border-sidebar-border max-w-4xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Unggah Media Baru</h2>
-                        <Button asChild variant="outline" size="sm">
-                            <Link href="/admin/gallery-albums"><ArrowLeft className="mr-2 h-4 w-4" /> Kembali ke Album</Link>
-                        </Button>
+            <Head title="Kelola Isi Media Galeri - Desa Sausu Trans" />
+
+            <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto w-full bg-white text-slate-900">
+                {/* Header Section */}
+                <div className="border-b border-slate-200 pb-8">
+                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                        <div>
+                            <Link href="/admin/gallery-albums" className="text-xs text-amber-700 hover:underline flex items-center gap-1 mb-2 font-medium">
+                                <ArrowLeft className="h-3.5 w-3.5" /> Kembali ke Daftar Album
+                            </Link>
+                            <h1 className="text-4xl md:text-5xl font-serif text-slate-900">
+                                Upload & Kelola Media
+                            </h1>
+                            <p className="mt-2 text-slate-600 max-w-2xl">
+                                Upload foto dan video kegiatan ke album galeri yang ditentukan.
+                            </p>
+                        </div>
                     </div>
-                    
-                    <form onSubmit={submit} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <Label htmlFor="gallery_album_id">Pilih Album</Label>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Upload Form Column (4 cols) */}
+                    <div className="lg:col-span-4 border border-slate-200 p-6 space-y-6 self-start">
+                        <h2 className="font-serif font-bold text-slate-900 text-lg border-b border-slate-200 pb-3 flex items-center gap-2">
+                            <Upload className="h-5 w-5 text-amber-700" />
+                            Upload Media Baru
+                        </h2>
+
+                        <form onSubmit={submit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="album_id" className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Pilih Album Tujuan</Label>
                                 <select
-                                    id="gallery_album_id"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    id="album_id"
+                                    className="w-full h-10 border border-slate-300 bg-white text-slate-900 px-3 py-2 text-sm focus:outline-none focus:border-amber-700"
                                     value={data.gallery_album_id}
                                     onChange={e => setData('gallery_album_id', e.target.value)}
                                 >
-                                    <option value="">-- Pilih Album --</option>
-                                    {albums.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                                    {albums.map(a => (
+                                        <option key={a.id} value={a.id}>{a.name}</option>
+                                    ))}
                                 </select>
-                                {errors.gallery_album_id && <p className="text-destructive text-sm mt-1">{errors.gallery_album_id}</p>}
                             </div>
-                            <div>
-                                <Label htmlFor="files">Pilih File (Foto / Video)</Label>
-                                <Input 
-                                    id="files" 
-                                    type="file" 
-                                    multiple 
-                                    accept="image/*,video/mp4" 
-                                    ref={fileInputRef}
-                                    onChange={e => setData('files', Array.from(e.target.files || []))} 
+
+                            <div className="space-y-2">
+                                <Label htmlFor="title" className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Judul / Keterangan Media (Opsional)</Label>
+                                <Input
+                                    id="title"
+                                    placeholder="Contoh: Foto Peresmian Balai Desa"
+                                    value={data.title}
+                                    onChange={e => setData('title', e.target.value)}
+                                    className="h-10 border-slate-300 focus-visible:ring-amber-700 text-sm"
                                 />
-                                {errors.files && <p className="text-destructive text-sm mt-1">{errors.files}</p>}
-                                <p className="text-muted-foreground text-xs mt-1">Bisa pilih lebih dari satu file sekaligus (Maks 20MB/file).</p>
                             </div>
-                        </div>
-                        
-                        {progress && (
-                            <div className="w-full bg-secondary rounded-full h-2.5 mt-2">
-                                <div className="bg-emerald-600 h-2.5 rounded-full" style={{ width: `${progress.percentage}%` }}></div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="file" className="text-xs font-semibold text-slate-700 uppercase tracking-wide">Pilih Berkas (Foto/Video)</Label>
+                                <Input
+                                    id="file"
+                                    type="file"
+                                    accept="image/*,video/*"
+                                    onChange={handleFileChange}
+                                    className="h-10 border-slate-300 cursor-pointer text-xs"
+                                />
+                                {errors.file && <p className="text-rose-600 text-xs mt-1">{errors.file}</p>}
                             </div>
-                        )}
 
-                        <div className="flex justify-end">
-                            <Button type="submit" disabled={processing}><Plus className="mr-2 h-4 w-4" /> Unggah Media</Button>
+                            {filePreview && (
+                                <div className="border border-slate-200 overflow-hidden">
+                                    <img src={filePreview} alt="Preview Upload" className="w-full h-40 object-cover" />
+                                </div>
+                            )}
+
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full bg-amber-700 hover:bg-amber-800 text-white font-medium py-2.5 rounded-none transition-colors"
+                            >
+                                <Upload className="mr-2 h-4 w-4" /> Unggah Sekarang
+                            </Button>
+                        </form>
+                    </div>
+
+                    {/* Media Display Grid Column (8 cols) */}
+                    <div className="lg:col-span-8 border border-slate-200 p-6 space-y-6">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                            <div>
+                                <h2 className="font-serif font-bold text-slate-900 text-xl">Daftar Berkas Media</h2>
+                                <p className="text-xs text-slate-500 mt-0.5">Media yang ada pada album ini</p>
+                            </div>
+
+                            <span className="text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1.5 self-start sm:self-auto">
+                                Total {filteredMedia.length} berkas
+                            </span>
                         </div>
-                    </form>
-                </div>
 
-                {/* Media Grid */}
-                <div className="bg-card text-card-foreground shadow rounded-xl p-6 border border-sidebar-border/70 dark:border-sidebar-border">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-bold">Daftar Media</h2>
-                        {selectedAlbum && (
-                            <p className="text-muted-foreground text-sm">Menampilkan media dari album yang dipilih.</p>
+                        {filteredMedia.length === 0 ? (
+                            <div className="py-16 text-center text-slate-500">
+                                <Folder className="h-12 w-12 mx-auto text-amber-700/30 mb-2" />
+                                <p className="font-serif font-bold text-slate-900 text-base">Belum ada media di album ini</p>
+                                <p className="text-xs mt-1 text-slate-500">Gunakan form di samping kiri untuk mengunggah foto atau video.</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {filteredMedia.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="border border-slate-200 overflow-hidden group relative bg-slate-50"
+                                    >
+                                        <div className="aspect-square overflow-hidden bg-slate-200 flex items-center justify-center">
+                                            {item.type === 'video' ? (
+                                                <div className="w-full h-full flex items-center justify-center bg-slate-900 text-white font-semibold text-xs">
+                                                    <Video className="h-6 w-6 text-amber-500 mr-1" /> Video
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={`/storage/${item.file_path}`}
+                                                    alt={item.title || 'Foto Galeri'}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                            )}
+                                        </div>
+
+                                        <div className="p-3 bg-white border-t border-slate-200 flex items-center justify-between gap-2">
+                                            <span className="text-xs font-medium text-slate-900 truncate">
+                                                {item.title || 'Tanpa Judul'}
+                                            </span>
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="p-1 border border-rose-200 text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
+                                                title="Hapus Media"
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
-                    
-                    {media.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                            {media.map((item: any) => (
-                                <div key={item.id} className="relative group rounded-lg overflow-hidden border bg-slate-100 dark:bg-zinc-900 aspect-square">
-                                    {item.type === 'photo' ? (
-                                        <img src={`/storage/${item.file_path}`} alt={item.title} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center relative bg-black/80">
-                                            <video src={`/storage/${item.file_path}`} className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                                            <PlayCircle className="h-12 w-12 text-white/80 z-10" />
-                                        </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-4 text-center">
-                                        <span className="text-white text-xs truncate w-full">{item.title}</span>
-                                        <span className="text-emerald-400 text-xs truncate w-full">{item.album?.name}</span>
-                                        <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)} className="mt-2">
-                                            <Trash className="h-4 w-4 mr-1" /> Hapus
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-                            <ImageIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                            <p>Belum ada media. Unggah foto atau video di form atas.</p>
-                        </div>
-                    )}
                 </div>
-                
             </div>
         </>
     );

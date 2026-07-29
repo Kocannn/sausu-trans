@@ -30,6 +30,9 @@ class VillagePotentialController extends Controller
             'category' => 'required|in:wisata,produk_umkm,pertanian,peternakan,lainnya',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'address' => 'nullable|string',
         ]);
 
         $dbCategory = match($validated['category']) {
@@ -43,6 +46,9 @@ class VillagePotentialController extends Controller
             'slug' => \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid(),
             'category' => $dbCategory,
             'description' => $validated['description'],
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'address' => $validated['address'] ?? null,
         ];
 
         if ($request->hasFile('image')) {
@@ -68,6 +74,9 @@ class VillagePotentialController extends Controller
             'category' => 'required|in:wisata,produk_umkm,pertanian,peternakan,lainnya',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
+            'address' => 'nullable|string',
         ]);
 
         $dbCategory = match($validated['category']) {
@@ -81,6 +90,9 @@ class VillagePotentialController extends Controller
             'slug' => \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid(),
             'category' => $dbCategory,
             'description' => $validated['description'],
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'address' => $validated['address'] ?? null,
         ];
 
         if ($request->hasFile('image')) {

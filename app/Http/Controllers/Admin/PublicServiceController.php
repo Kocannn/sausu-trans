@@ -30,6 +30,7 @@ class PublicServiceController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'operating_hours' => 'nullable|string',
+            'online_link' => 'nullable|url',
             'is_active' => 'boolean'
         ]);
 
@@ -53,6 +54,7 @@ class PublicServiceController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'operating_hours' => 'nullable|string',
+            'online_link' => 'nullable|url',
             'is_active' => 'boolean'
         ]);
 

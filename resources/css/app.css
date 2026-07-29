@@ -141,3 +141,111 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Scoped Rich Text Content Styles */
+.rich-content h1 {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+    font-weight: 800 !important;
+    font-family: serif !important;
+    margin-top: 1.75rem !important;
+    margin-bottom: 0.75rem !important;
+    color: var(--color-foreground) !important;
+}
+
+.rich-content h2 {
+    font-size: 1.75rem !important;
+    line-height: 2.25rem !important;
+    font-weight: 700 !important;
+    font-family: serif !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+    color: #b45309 !important;
+    border-bottom: 2px solid #fef3c7 !important;
+    padding-bottom: 0.35rem !important;
+}
+
+.rich-content h3 {
+    font-size: 1.35rem !important;
+    line-height: 1.75rem !important;
+    font-weight: 700 !important;
+    font-family: serif !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+    color: var(--color-foreground) !important;
+}
+
+.rich-content h4 {
+    font-size: 1.15rem !important;
+    line-height: 1.5rem !important;
+    font-weight: 600 !important;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    color: var(--color-foreground) !important;
+}
+
+.rich-content p {
+    margin-bottom: 1rem !important;
+    line-height: 1.75 !important;
+}
+
+.rich-content ul {
+    list-style-type: disc !important;
+    padding-left: 1.75rem !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.rich-content ul li {
+    margin-bottom: 0.35rem !important;
+}
+
+.rich-content ol {
+    list-style-type: decimal !important;
+    padding-left: 1.75rem !important;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.rich-content ol li {
+    margin-bottom: 0.35rem !important;
+}
+
+.rich-content blockquote {
+    border-left: 4px solid #b45309 !important;
+    background-color: rgba(254, 243, 199, 0.4) !important;
+    padding: 0.75rem 1.25rem !important;
+    margin: 1.25rem 0 !important;
+    font-style: italic !important;
+    border-radius: 0 0.75rem 0.75rem 0 !important;
+    color: #78350f !important;
+}
+
+.rich-content mark {
+    background-color: #fef08a !important;
+    color: #854d0e !important;
+    padding: 0.1rem 0.35rem !important;
+    border-radius: 0.25rem !important;
+    font-weight: 600 !important;
+}
+
+.rich-content u {
+    text-decoration: underline !important;
+}
+
+.rich-content s {
+    text-decoration: line-through !important;
+}
+
+.rich-content hr {
+    border: 0 !important;
+    border-top: 2px dashed #cbd5e1 !important;
+    margin: 1.75rem 0 !important;
+}
+
+.rich-content a {
+    color: #b45309 !important;
+    text-decoration: underline !important;
+    font-weight: 600 !important;
+}
+

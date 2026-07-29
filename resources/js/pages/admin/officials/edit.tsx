@@ -1,77 +1,160 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ArrowLeft, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState, ChangeEvent } from 'react';
 
 type Props = {
     official: {
         id: number;
         name: string;
         position: string;
-        photo: string | null;
-        order: number;
-    }
+        order?: number;
+        photo?: string | null;
+    };
 };
 
 export default function Edit({ official }: Props) {
+    const initialPreview = official.photo ? `/storage/${official.photo}` : null;
+    const [previewImage, setPreviewImage] = useState<string | null>(initialPreview);
+
     const { data, setData, post, processing, errors } = useForm({
         _method: 'put',
-        name: official.name,
-        position: official.position,
+        name: official.name || '',
+        position: official.position || '',
+        order: String(official.order ?? 0),
         photo: null as File | null,
-        order: official.order,
     });
+
+    const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setData('photo', file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewImage(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(`/admin/officials/${official.id}`, {
-            onSuccess: () => toast.success('Aparatur berhasil diperbarui.'),
+            onSuccess: () => toast.success('Data aparatur desa berhasil diperbarui.'),
         });
     };
 
     return (
         <>
-            <Head title="Edit Aparatur" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="bg-card text-card-foreground shadow rounded-xl p-6 border border-sidebar-border/70 dark:border-sidebar-border max-w-2xl">
-                    <h2 className="text-xl font-bold mb-4">Edit Aparatur Desa</h2>
-                    <form onSubmit={submit} className="space-y-4">
+            <Head title={`Edit Aparatur: ${official.name}`} />
+
+            <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto w-full bg-white text-slate-900">
+                {/* Header Section */}
+                <div className="border-b border-slate-200 pb-8">
+                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                         <div>
-                            <Label htmlFor="name">Nama Lengkap</Label>
-                            <Input id="name" value={data.name} onChange={e => setData('name', e.target.value)} />
-                            {errors.name && <p className="text-destructive text-sm mt-1">{errors.name}</p>}
+                            <Link href="/admin/officials" className="text-xs text-amber-700 hover:underline flex items-center gap-1 mb-2 font-medium">
+                                <ArrowLeft className="h-3.5 w-3.5" /> Kembali ke Daftar Aparatur
+                            </Link>
+                            <h1 className="text-4xl md:text-5xl font-serif text-slate-900">
+                                Edit Aparatur Desa
+                            </h1>
+                            <p className="mt-2 text-slate-600">
+                                Perbarui nama, jabatan, urutan, atau foto profil aparatur desa.
+                            </p>
                         </div>
-                        <div>
-                            <Label htmlFor="position">Jabatan</Label>
-                            <Input id="position" value={data.position} onChange={e => setData('position', e.target.value)} />
-                            {errors.position && <p className="text-destructive text-sm mt-1">{errors.position}</p>}
+
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/admin/officials"
+                                className="px-4 py-2.5 border border-slate-300 text-slate-900 font-medium text-sm hover:bg-slate-50 transition-colors"
+                            >
+                                Batal
+                            </Link>
+                            <Button
+                                onClick={submit}
+                                disabled={processing}
+                                className="bg-amber-700 hover:bg-amber-800 text-white font-medium text-sm rounded-none transition-colors"
+                            >
+                                <CheckCircle2 className="mr-2 h-4 w-4" /> Simpan Perubahan
+                            </Button>
                         </div>
+                    </div>
+                </div>
+
+                <form onSubmit={submit} className="border border-slate-200 p-6 space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="name" className="text-sm font-semibold text-slate-900">Nama Lengkap & Gelar</Label>
+                        <Input
+                            id="name"
+                            value={data.name}
+                            onChange={e => setData('name', e.target.value)}
+                            className="h-11 border-slate-300 focus-visible:ring-amber-700 font-serif text-base"
+                        />
+                        {errors.name && <p className="text-rose-600 text-xs mt-1">{errors.name}</p>}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="position" className="text-sm font-semibold text-slate-900">Jabatan Struktural</Label>
+                            <Input
+                                id="position"
+                                value={data.position}
+                                onChange={e => setData('position', e.target.value)}
+                                className="h-11 border-slate-300 focus-visible:ring-amber-700 text-sm"
+                            />
+                            {errors.position && <p className="text-rose-600 text-xs mt-1">{errors.position}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="order" className="text-sm font-semibold text-slate-900">Urutan Tampil (Posisi)</Label>
+                            <Input
+                                id="order"
+                                type="number"
+                                value={data.order}
+                                onChange={e => setData('order', e.target.value)}
+                                className="h-11 border-slate-300 focus-visible:ring-amber-700 text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start pt-4 border-t border-slate-200">
+                        <div className="space-y-2">
+                            <Label htmlFor="photo" className="text-sm font-semibold text-slate-900">Ganti Foto Resmi (Opsional)</Label>
+                            <Input
+                                id="photo"
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhotoChange}
+                                className="h-10 border-slate-300 cursor-pointer text-xs"
+                            />
+                            {errors.photo && <p className="text-rose-600 text-xs mt-1">{errors.photo}</p>}
+                        </div>
+
                         <div>
-                            <Label htmlFor="photo">Ganti Foto (Biarkan kosong jika tidak ingin mengubah)</Label>
-                            {official.photo && (
-                                <div className="mb-2">
-                                    <img src={`/storage/${official.photo}`} alt={official.name} className="h-20 w-20 rounded object-cover" />
+                            <Label className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2 block">Foto Profil Terpasang</Label>
+                            {previewImage ? (
+                                <img src={previewImage} alt="Preview" className="h-32 w-32 object-cover border border-slate-300 shadow-sm" />
+                            ) : (
+                                <div className="h-32 w-32 bg-slate-50 border border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 text-xs text-center p-2">
+                                    <ImageIcon className="h-6 w-6 opacity-40 mb-1" />
+                                    <span>Belum ada foto</span>
                                 </div>
                             )}
-                            <Input id="photo" type="file" accept="image/*" onChange={e => setData('photo', e.target.files?.[0] || null)} />
-                            {errors.photo && <p className="text-destructive text-sm mt-1">{errors.photo}</p>}
                         </div>
-                        <div>
-                            <Label htmlFor="order">Urutan Tampil (Opsional)</Label>
-                            <Input id="order" type="number" value={data.order} onChange={e => setData('order', parseInt(e.target.value))} />
-                            {errors.order && <p className="text-destructive text-sm mt-1">{errors.order}</p>}
-                        </div>
-                        <div className="flex justify-end gap-2 mt-4">
-                            <Button variant="outline" type="button" asChild>
-                                <Link href="/admin/officials">Batal</Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>Simpan Perubahan</Button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 flex justify-end">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-amber-700 hover:bg-amber-800 text-white font-medium px-6 py-2.5 rounded-none transition-colors"
+                        >
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> Simpan Perubahan
+                        </Button>
+                    </div>
+                </form>
             </div>
         </>
     );

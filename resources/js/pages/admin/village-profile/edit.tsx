@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { FormEventHandler, useState } from 'react';
-import { Info, BarChart2, FileText, Users } from 'lucide-react';
+import { Info, BarChart2, FileText, Users, CheckCircle2 } from 'lucide-react';
 import GeneralSettings from './components/GeneralSettings';
 import StatisticsSettings from './components/StatisticsSettings';
 import HistoryVisionMissionSettings from './components/HistoryVisionMissionSettings';
@@ -46,7 +46,7 @@ export default function Edit({ profile }: Props) {
         { id: 'umum', label: 'Informasi Umum', icon: Info },
         { id: 'statistik', label: 'Statistik & Demografi', icon: BarChart2 },
         { id: 'profil', label: 'Sejarah & Visi Misi', icon: FileText },
-        { id: 'aparatur', label: 'Kepemimpinan', icon: Users },
+        { id: 'aparatur', label: 'Riwayat Kepemimpinan', icon: Users },
     ];
 
     const defaultStats: VillageStats = {
@@ -85,23 +85,47 @@ export default function Edit({ profile }: Props) {
 
     return (
         <>
-            <Head title="Pengaturan Desa" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="bg-card text-card-foreground shadow rounded-xl p-6 border border-sidebar-border/70 dark:border-sidebar-border">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-2xl font-bold">Pengaturan Profil Desa</h2>
-                    </div>
+            <Head title="Pengaturan Profil Desa - Desa Sausu Trans" />
 
-                    <div className="flex space-x-1 border-b border-slate-200 dark:border-zinc-800 mb-8 overflow-x-auto pb-px">
+            <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto w-full bg-white text-slate-900">
+                {/* Header Section */}
+                <div className="border-b border-slate-200 pb-8">
+                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                        <div>
+                            <span className="text-sm font-medium text-slate-500 tracking-wide uppercase">Identitas Resmi</span>
+                            <h1 className="mt-2 text-4xl md:text-5xl font-serif text-slate-900">
+                                Profil & Pengaturan Desa
+                            </h1>
+                            <p className="mt-3 text-lg text-slate-600 max-w-2xl">
+                                Atur informasi umum, data statistik demografi, sejarah, visi misi, serta riwayat kepemimpinan Desa Sausu Trans.
+                            </p>
+                        </div>
+
+                        <Button
+                            onClick={submit}
+                            disabled={processing}
+                            className="bg-amber-700 hover:bg-amber-800 text-white font-medium text-sm rounded-none px-5 py-2.5 transition-colors shrink-0 self-start md:self-auto"
+                        >
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> Simpan Perubahan
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Main Settings Section */}
+                <div className="border border-slate-200 p-6 space-y-6">
+                    {/* Navigation Tabs */}
+                    <div className="flex space-x-2 border-b border-slate-200 pb-3 overflow-x-auto">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
+                            const isActive = activeTab === tab.id;
                             return (
                                 <button
                                     key={tab.id}
+                                    type="button"
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${activeTab === tab.id
-                                        ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300'
+                                    className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 ${isActive
+                                            ? 'border-amber-700 text-amber-700 bg-amber-50/50'
+                                            : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
                                         }`}
                                 >
                                     <Icon className="h-4 w-4" />
@@ -111,34 +135,38 @@ export default function Edit({ profile }: Props) {
                         })}
                     </div>
 
-                    <form onSubmit={submit} className="space-y-10">
+                    <form onSubmit={submit} className="space-y-8">
                         {activeTab === 'umum' && (
-                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div>
                                 <GeneralSettings data={data} setData={setData} errors={errors} />
                             </div>
                         )}
 
                         {activeTab === 'statistik' && (
-                            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="space-y-8">
                                 <StatisticsSettings data={data} setData={setData} errors={errors} />
                             </div>
                         )}
 
                         {activeTab === 'profil' && (
-                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div>
                                 <HistoryVisionMissionSettings data={data} setData={setData} errors={errors} />
                             </div>
                         )}
 
                         {activeTab === 'aparatur' && (
-                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div>
                                 <LeadershipTimelineSettings data={data} setData={setData} />
                             </div>
                         )}
 
-                        <div className="pt-6 border-t flex justify-end">
-                            <Button type="submit" size="lg" disabled={processing} className="w-full sm:w-auto">
-                                Simpan Perubahan
+                        <div className="pt-6 border-t border-slate-200 flex justify-end">
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="bg-amber-700 hover:bg-amber-800 text-white font-medium px-6 py-2.5 rounded-none transition-colors"
+                            >
+                                <CheckCircle2 className="mr-2 h-4 w-4" /> Simpan Perubahan
                             </Button>
                         </div>
                     </form>

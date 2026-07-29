@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash } from 'lucide-react';
-import { DemographicCategory, DemographicItem } from '../edit';
+export type DemographicItem = { label: string; count: number | string };
+export type DemographicCategory = { category: string; items: DemographicItem[] };
 
 type Props = {
     data: any;
