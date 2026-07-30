@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Plus, Pencil, Trash2, Users, Search, UserCheck } from 'lucide-react';
+import { Plus, Pencil, Trash2, Users, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
