@@ -27,7 +27,6 @@ export default function Index({ officials }: Props) {
             });
         }
     };
-    console.log('officials:', officials);
 
     const filteredOfficials = officials.filter(o =>
         o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

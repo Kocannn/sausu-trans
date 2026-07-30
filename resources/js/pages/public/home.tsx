@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, FileText, Newspaper } from 'lucide-react';
+import { ArrowRight, FileText, ArrowUp, ArrowDown, ArrowLeft } from 'lucide-react';
 import NewsCard from './news/components/NewsCard';
 
 type Props = {
@@ -18,13 +18,13 @@ export default function Home({ profile, latestNews, services }: Props) {
             {/* Hero Section - Full Background */}
             <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden">
                 {/* Background Image */}
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center z-0"
                     style={{ backgroundImage: "url('/hero.jpg')" }}
                 ></div>
                 {/* Dark Overlay */}
                 <div className="absolute inset-0 bg-black/60 z-10"></div>
-                
+
                 {/* Content */}
                 <div className="relative z-20 max-w-6xl mx-auto px-6 lg:px-8 py-16 lg:py-24 text-center md:text-left text-white w-full">
                     <span className="text-sm font-bold text-amber-500 tracking-widest uppercase">Portal Informasi Desa</span>
@@ -122,8 +122,99 @@ export default function Home({ profile, latestNews, services }: Props) {
                 </div>
             </section>
 
-            {/* Services Section - Grid without hover effects */}
+            {/* Map Section */}
             <section className="bg-slate-50 border-b border-slate-200">
+                <div className="max-w-6xl mx-auto px-6 lg:px-8 py-20">
+                    <div className="mb-12">
+                        <h2 className="text-4xl font-serif text-slate-900 mb-2">Peta Wilayah</h2>
+                        <p className="text-slate-600 mt-2">Denah tata ruang dan wilayah administratif Desa {profile?.name || 'Sausu Trans'}.</p>
+                        <div className="h-1 w-16 bg-amber-700 mt-4"></div>
+                    </div>
+
+                    <div className="w-full bg-white p-2 md:p-4 border border-slate-200">
+                        <img
+                            src="/Sausu Peta.webp"
+                            alt={`Peta Desa ${profile?.name || 'Sausu Trans'}`}
+                            className="w-full h-auto object-contain mx-auto"
+                        />
+                    </div>
+
+                    {/* Legenda & Batas Administrasi */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 bg-white border border-slate-200 p-8">
+                        {/* Batas Administrasi */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-1.5 h-6 bg-amber-500"></div>
+                                <h3 className="text-xl font-bold text-slate-800 uppercase tracking-wide">Legenda & Batas Administrasi</h3>
+                            </div>
+                            <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                                Informasi spasial batas wilayah administratif Desa {profile?.name || 'Sausu Trans'}, Kecamatan Sausu, Kabupaten Parigi Moutong.
+                            </p>
+
+                            <ul className="space-y-3">
+                                <li className="flex items-center justify-between py-2 border-b border-slate-200/60">
+                                    <div className="flex items-center gap-2 text-slate-600">
+                                        <ArrowUp className="w-4 h-4 text-amber-500" />
+                                        <span className="text-sm font-medium">Sebelah Utara</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-800">Sausu Gandasari, Kecamatan Sausu</span>
+                                </li>
+                                <li className="flex items-center justify-between py-2 border-b border-slate-200/60">
+                                    <div className="flex items-center gap-2 text-slate-600">
+                                        <ArrowRight className="w-4 h-4 text-amber-500" />
+                                        <span className="text-sm font-medium">Sebelah Timur</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-800">Sausu Torono, Kecamatan Sausu</span>
+                                </li>
+                                <li className="flex items-center justify-between py-2 border-b border-slate-200/60">
+                                    <div className="flex items-center gap-2 text-slate-600">
+                                        <ArrowDown className="w-4 h-4 text-amber-500" />
+                                        <span className="text-sm font-medium">Sebelah Selatan</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-800">Sausu Salubanga, Kecamatan Sausu</span>
+                                </li>
+                                <li className="flex items-center justify-between py-2">
+                                    <div className="flex items-center gap-2 text-slate-600">
+                                        <ArrowLeft className="w-4 h-4 text-amber-500" />
+                                        <span className="text-sm font-medium">Sebelah Barat</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-slate-800">Sausu Taliabo, Kecamatan Sausu</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Cakupan Wilayah */}
+                        <div>
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-1.5 h-6 bg-teal-600"></div>
+                                <h3 className="text-xl font-bold text-slate-800 uppercase tracking-wide">Cakupan Wilayah</h3>
+                            </div>
+
+                            <div className="bg-slate-100 p-6 rounded-r-xl border-l-4 border-amber-500 mb-4">
+                                <div className="text-3xl font-bold text-slate-800">{profile?.demographics?.territorial?.dusun || '3'}</div>
+                                <div className="text-xs font-bold text-slate-500 uppercase mt-1 tracking-wider">Dusun</div>
+                            </div>
+
+                            {/*}<div className="text-center border-l border-r border-slate-200">
+                                    <div className="text-3xl font-bold text-slate-800">{profile?.demographics?.territorial?.rw || '16'}</div>
+                                    <div className="text-xs font-bold text-slate-500 uppercase mt-1 tracking-wider">RW</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-slate-800">{profile?.demographics?.territorial?.rt || '61'}</div>
+                                    <div className="text-xs font-bold text-slate-500 uppercase mt-1 tracking-wider">RT</div>
+                                </div> */}
+
+                            <div className="bg-slate-100 p-6 rounded-r-xl border-l-4 border-amber-500">
+                                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Estimasi Total Luas Wilayah:</div>
+                                <div className="text-4xl font-bold text-slate-800">{profile?.demographics?.territorial?.area || '24.000'} Ha</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Services Section - Grid without hover effects */}
+            <section className="bg-white border-b border-slate-200">
                 <div className="max-w-6xl mx-auto px-6 lg:px-8 py-20">
                     <div className="mb-12">
                         <h2 className="text-4xl font-serif text-slate-900 mb-2">Layanan Publik</h2>

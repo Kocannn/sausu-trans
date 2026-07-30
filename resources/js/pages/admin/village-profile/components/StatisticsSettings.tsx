@@ -37,6 +37,14 @@ export default function StatisticsSettings({ data, setData }: Props) {
                         <Label htmlFor="dusun">Jumlah Dusun</Label>
                         <Input type="number" id="dusun" value={stats?.territorial?.dusun || ''} onChange={e => updateStat('territorial', 'dusun', e.target.value)} />
                     </div>
+                    {/* <div>
+                        <Label htmlFor="rw">Jumlah RW</Label>
+                        <Input type="number" id="rw" value={stats?.territorial?.rw || ''} onChange={e => updateStat('territorial', 'rw', e.target.value)} />
+                    </div>
+                    <div>
+                        <Label htmlFor="rt">Jumlah RT</Label>
+                        <Input type="number" id="rt" value={stats?.territorial?.rt || ''} onChange={e => updateStat('territorial', 'rt', e.target.value)} />
+                    </div> */}
                 </div>
             </div>
 

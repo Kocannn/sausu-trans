@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\PublicController::class, 'index'])->name('home');
 Route::get('/profil', [\App\Http\Controllers\PublicController::class, 'profile'])->name('public.profile');
+Route::get('/aparatur-desa', [\App\Http\Controllers\PublicController::class, 'officials'])->name('public.officials');
+Route::get('/lembaga-desa', [\App\Http\Controllers\PublicController::class, 'institutions'])->name('public.institutions');
 Route::get('/layanan', [\App\Http\Controllers\PublicController::class, 'services'])->name('public.services');
 Route::get('/berita', [\App\Http\Controllers\PublicController::class, 'news'])->name('public.news.index');
 Route::get('/berita/{slug}', [\App\Http\Controllers\PublicController::class, 'newsDetail'])->name('public.news.show');
@@ -25,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/village-profile', [App\Http\Controllers\Admin\VillageProfileController::class, 'edit'])->name('admin.village-profile.edit');
     Route::put('admin/village-profile', [App\Http\Controllers\Admin\VillageProfileController::class, 'update'])->name('admin.village-profile.update');
     Route::resource('admin/officials', App\Http\Controllers\Admin\VillageOfficialController::class)->names('admin.officials');
+    Route::resource('admin/village-institutions', App\Http\Controllers\Admin\VillageInstitutionController::class)->names('admin.village-institutions');
+    Route::post('admin/village-institutions/{village_institution}/members', [App\Http\Controllers\Admin\InstitutionMemberController::class, 'store'])->name('admin.institution-members.store');
+    Route::put('admin/institution-members/{institution_member}', [App\Http\Controllers\Admin\InstitutionMemberController::class, 'update'])->name('admin.institution-members.update');
+    Route::delete('admin/institution-members/{institution_member}', [App\Http\Controllers\Admin\InstitutionMemberController::class, 'destroy'])->name('admin.institution-members.destroy');
     Route::resource('admin/news-categories', App\Http\Controllers\Admin\NewsCategoryController::class)->names('admin.news-categories');
     Route::resource('admin/news', App\Http\Controllers\Admin\NewsController::class)->names('admin.news');
     Route::resource('admin/gallery-albums', App\Http\Controllers\Admin\GalleryAlbumController::class)->names('admin.gallery-albums');

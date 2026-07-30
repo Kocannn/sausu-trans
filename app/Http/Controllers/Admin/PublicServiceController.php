@@ -28,7 +28,7 @@ class PublicServiceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'requirements' => 'required|string',
+            'requirements' => 'nullable|string',
             'operating_hours' => 'nullable|string',
             'online_link' => 'nullable|url',
             'is_active' => 'boolean'
@@ -52,7 +52,7 @@ class PublicServiceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'requirements' => 'required|string',
+            'requirements' => 'nullable|string',
             'operating_hours' => 'nullable|string',
             'online_link' => 'nullable|url',
             'is_active' => 'boolean'

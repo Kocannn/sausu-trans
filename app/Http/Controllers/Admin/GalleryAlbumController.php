@@ -7,6 +7,7 @@ use App\Models\GalleryAlbum;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryAlbumController extends Controller
 {
@@ -58,7 +59,12 @@ class GalleryAlbumController extends Controller
 
     public function destroy(GalleryAlbum $gallery_album)
     {
+        foreach ($gallery_album->media as $media) {
+            if ($media->file_path && Storage::disk('public')->exists($media->file_path)) {
+                Storage::disk('public')->delete($media->file_path);
+            }
+        }
         $gallery_album->delete();
-        return redirect()->route('admin.gallery-albums.index')->with('success', 'Album berhasil dihapus.');
+        return redirect()->route('admin.gallery-albums.index')->with('success', 'Album beserta medianya berhasil dihapus.');
     }
 }

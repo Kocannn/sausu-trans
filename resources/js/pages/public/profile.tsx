@@ -12,10 +12,9 @@ type Official = {
 
 type Props = {
     profile: any;
-    officials: Official[];
 };
 
-export default function Profile({ profile, officials }: Props) {
+export default function Profile({ profile }: Props) {
     return (
         <PublicLayout>
             <Head title="Profil Desa" />
@@ -127,36 +126,6 @@ export default function Profile({ profile, officials }: Props) {
                                     </div>
                                 </div>
                             )}
-
-                            {/* Aparatur */}
-                            <div>
-                                <h3 className="text-xl font-serif text-slate-900 mb-2">Aparatur Desa</h3>
-                                <div className="h-1 w-12 bg-amber-700 mt-4 mb-6"></div>
-
-                                <div className="space-y-4">
-                                    {officials.length > 0 ? officials.map(official => (
-                                        <div key={official.id} className="bg-white p-4 border border-slate-200 flex items-center gap-4 hover:border-amber-700 transition-colors">
-                                            <div className="h-14 w-14 bg-slate-100 shrink-0">
-                                                {official.photo ? (
-                                                    <img src={`/storage/${official.photo}`} alt={official.name} className="h-full w-full object-cover" />
-                                                ) : (
-                                                    <div className="h-full w-full flex items-center justify-center text-slate-400">
-                                                        <User className="h-6 w-6" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div>
-                                                <h4 className="font-bold text-slate-900 text-sm">{official.name}</h4>
-                                                <p className="text-xs text-amber-700 font-medium mt-1">{official.position}</p>
-                                            </div>
-                                        </div>
-                                    )) : (
-                                        <div className="text-center text-sm text-slate-500 py-6 border border-slate-200 bg-white">
-                                            Belum ada data aparatur.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
 
                         </div>
                     </div>

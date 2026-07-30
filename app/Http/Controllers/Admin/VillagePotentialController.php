@@ -35,16 +35,10 @@ class VillagePotentialController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        $dbCategory = match($validated['category']) {
-             'wisata' => 'wisata',
-             'produk_umkm' => 'produk',
-             default => 'lainnya'
-        };
-
         $insertData = [
             'name' => $validated['title'],
             'slug' => \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid(),
-            'category' => $dbCategory,
+            'category' => $validated['category'],
             'description' => $validated['description'],
             'latitude' => $validated['latitude'] ?? null,
             'longitude' => $validated['longitude'] ?? null,
@@ -79,21 +73,18 @@ class VillagePotentialController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        $dbCategory = match($validated['category']) {
-             'wisata' => 'wisata',
-             'produk_umkm' => 'produk',
-             default => 'lainnya'
-        };
-
         $updateData = [
             'name' => $validated['title'],
-            'slug' => \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid(),
-            'category' => $dbCategory,
+            'category' => $validated['category'],
             'description' => $validated['description'],
             'latitude' => $validated['latitude'] ?? null,
             'longitude' => $validated['longitude'] ?? null,
             'address' => $validated['address'] ?? null,
         ];
+
+        if ($village_potential->name !== $validated['title']) {
+            $updateData['slug'] = \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid();
+        }
 
         if ($request->hasFile('image')) {
             if ($village_potential->image && Storage::disk('public')->exists($village_potential->image)) {

@@ -4,12 +4,30 @@ import { MapPin, Mail, Phone, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
 
 type Props = {
     profile: any;
 };
 
 export default function Contact({ profile }: Props) {
+    const [message, setMessage] = useState('');
+
+    const handleWhatsAppSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        let phone = profile?.phone ? profile.phone.replace(/[^0-9]/g, '') : '';
+        if (!phone) phone = '6281234567890';
+        if (phone.startsWith('0')) {
+            phone = '62' + phone.substring(1);
+        }
+        
+        const waMessage = message;
+        const encodedMessage = encodeURIComponent(waMessage);
+        
+        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    };
+
     return (
         <PublicLayout>
             <Head title="Kontak Kami" />
@@ -92,27 +110,13 @@ export default function Contact({ profile }: Props) {
                                 <div className="h-1 w-16 bg-amber-700 mt-4 mb-8"></div>
                                 <p className="text-slate-500 mb-8 text-sm">Punya pertanyaan atau masukan? Jangan ragu untuk mengirim pesan kepada kami.</p>
                                 
-                                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert('Fitur pengiriman pesan akan segera hadir!'); }}>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label htmlFor="name" className="text-xs font-bold text-slate-900 uppercase tracking-wide">Nama Lengkap</label>
-                                            <Input id="name" placeholder="Masukkan nama Anda" className="h-12 rounded-none border-slate-300 focus-visible:ring-amber-700" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label htmlFor="email" className="text-xs font-bold text-slate-900 uppercase tracking-wide">Alamat Email</label>
-                                            <Input id="email" type="email" placeholder="email@contoh.com" className="h-12 rounded-none border-slate-300 focus-visible:ring-amber-700" />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label htmlFor="subject" className="text-xs font-bold text-slate-900 uppercase tracking-wide">Subjek</label>
-                                        <Input id="subject" placeholder="Subjek pesan" className="h-12 rounded-none border-slate-300 focus-visible:ring-amber-700" />
-                                    </div>
+                                <form className="space-y-6" onSubmit={handleWhatsAppSubmit}>
                                     <div className="space-y-2">
                                         <label htmlFor="message" className="text-xs font-bold text-slate-900 uppercase tracking-wide">Pesan</label>
-                                        <Textarea id="message" placeholder="Tuliskan pesan Anda di sini..." className="min-h-[150px] rounded-none border-slate-300 focus-visible:ring-amber-700" />
+                                        <Textarea id="message" required value={message} onChange={e => setMessage(e.target.value)} placeholder="Tuliskan pesan Anda di sini..." className="min-h-[150px] rounded-none border-slate-300 focus-visible:ring-amber-700" />
                                     </div>
                                     <Button type="submit" className="w-full bg-amber-700 hover:bg-amber-800 text-white rounded-none h-14 text-base tracking-wide font-medium">
-                                        <Send className="mr-2 h-5 w-5" /> Kirim Pesan
+                                        <Send className="mr-2 h-5 w-5" /> Kirim ke WhatsApp
                                     </Button>
                                 </form>
                             </div>

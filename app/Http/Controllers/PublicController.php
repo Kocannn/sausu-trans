@@ -8,6 +8,7 @@ use App\Models\PublicService;
 use App\Models\VillageProfile;
 use App\Models\VillageOfficial;
 use App\Models\VillagePotential;
+use App\Models\VillageInstitution;
 use App\Models\GalleryAlbum;
 use App\Models\GalleryMedia;
 use Illuminate\Http\Request;
@@ -31,11 +32,34 @@ class PublicController extends Controller
     public function profile()
     {
         $profile = VillageProfile::first();
-        $officials = VillageOfficial::orderBy('order')->get();
 
         return Inertia::render('public/profile', [
+            'profile' => $profile
+        ]);
+    }
+
+    public function officials()
+    {
+        $profile = VillageProfile::first();
+        $officials = VillageOfficial::orderBy('order')->get();
+
+        return Inertia::render('public/officials', [
             'profile' => $profile,
             'officials' => $officials
+        ]);
+    }
+
+    public function institutions()
+    {
+        $profile = VillageProfile::first();
+        // Get institutions with their members, ordered by member order
+        $institutions = VillageInstitution::with(['members' => function($query) {
+            $query->orderBy('order');
+        }])->latest()->get();
+
+        return Inertia::render('public/institutions', [
+            'profile' => $profile,
+            'institutions' => $institutions
         ]);
     }
 

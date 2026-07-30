@@ -14,7 +14,7 @@ export type TimelineEntry = {
 };
 
 export type VillageStats = {
-    territorial: { area: string; dusun: string };
+    territorial: { area: string; dusun: string; rw: string; rt: string };
     education: { tk: string; sd: string; smp: string; sma: string; tpa: string };
     facilities: { posyandu: string; polindes: string; worship: string; sports: string };
     population: { total: string; kk: string };
@@ -50,7 +50,7 @@ export default function Edit({ profile }: Props) {
     ];
 
     const defaultStats: VillageStats = {
-        territorial: { area: '', dusun: '' },
+        territorial: { area: '', dusun: '', rw: '', rt: '' },
         education: { tk: '', sd: '', smp: '', sma: '', tpa: '' },
         facilities: { posyandu: '', polindes: '', worship: '', sports: '' },
         population: { total: '', kk: '' }

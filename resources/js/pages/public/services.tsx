@@ -75,7 +75,7 @@ export default function Services({ profile, services }: Props) {
                                                         <FileText className="h-4 w-4 text-amber-700" /> Persyaratan
                                                     </h4>
                                                     <div className="text-slate-600 bg-slate-50 p-6 border border-slate-200 whitespace-pre-wrap text-sm">
-                                                        {service.requirements}
+                                                        {service.requirements ? service.requirements : 'Tidak ada persyaratan khusus'}
                                                     </div>
                                                 </div>
                                             </div>

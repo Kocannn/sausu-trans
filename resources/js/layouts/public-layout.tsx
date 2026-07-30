@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, X, MapPin, Mail, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X, MapPin, Mail, Phone, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 type VillageProfile = {
     name: string;
@@ -20,11 +20,18 @@ export default function PublicLayout({ children }: Props) {
     const { props } = usePage();
     const profile = props.profile as VillageProfile | null;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    console.log('Logo', profile?.logo);
 
     const navLinks = [
         { name: 'Beranda', href: '/' },
         { name: 'Profil', href: '/profil' },
+        { 
+            name: 'Pemerintahan', 
+            dropdown: true,
+            items: [
+                { name: 'Aparatur Desa', href: '/aparatur-desa' },
+                { name: 'Lembaga Desa & BUMDes', href: '/lembaga-desa' }
+            ]
+        },
         { name: 'Layanan', href: '/layanan' },
         { name: 'Berita', href: '/berita' },
         { name: 'Potensi', href: '/potensi' },
@@ -44,24 +51,43 @@ export default function PublicLayout({ children }: Props) {
                                 <img src={`/storage/${profile.logo}`} alt="Logo Desa" className="h-10 w-10 object-contain" />
                             ) : (
                                 <div className="h-10 w-10 rounded bg-amber-700 flex items-center justify-center text-white font-serif font-bold text-lg">
-                                    {profile?.name ? profile.name.charAt(0) : 'D'}
+                                    Desa {profile?.name ? profile.name.charAt(0) : 'D'}
                                 </div>
                             )}
                             <Link href="/" className="font-serif font-bold text-lg text-slate-900 hover:text-amber-700 transition-colors">
-                                {profile?.name || 'Portal Desa'}
+                                Desa {profile?.name || 'Portal Desa'}
                             </Link>
                         </div>
 
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center space-x-8">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className="text-sm text-slate-600 hover:text-amber-700 font-medium transition-colors"
-                                >
-                                    {link.name}
-                                </Link>
+                                link.dropdown ? (
+                                    <div key={link.name} className="relative group">
+                                        <button className="flex items-center gap-1 text-sm text-slate-600 hover:text-amber-700 font-medium transition-colors py-2">
+                                            {link.name} <ChevronDown className="h-4 w-4" />
+                                        </button>
+                                        <div className="absolute left-0 top-full hidden group-hover:block w-56 bg-white border border-slate-200 shadow-sm mt-0 pt-2 pb-2">
+                                            {link.items?.map(sub => (
+                                                <Link
+                                                    key={sub.name}
+                                                    href={sub.href}
+                                                    className="block px-4 py-2 text-sm text-slate-600 hover:text-amber-700 hover:bg-slate-50"
+                                                >
+                                                    {sub.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        className="text-sm text-slate-600 hover:text-amber-700 font-medium transition-colors"
+                                    >
+                                        {link.name}
+                                    </Link>
+                                )
                             ))}
                         </nav>
 
@@ -87,14 +113,32 @@ export default function PublicLayout({ children }: Props) {
                     <div className="md:hidden border-t border-slate-200 bg-white">
                         <div className="px-6 py-3 space-y-1">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className="block py-2 text-sm text-slate-600 hover:text-amber-700 font-medium transition-colors"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {link.name}
-                                </Link>
+                                link.dropdown ? (
+                                    <div key={link.name} className="py-2">
+                                        <div className="text-sm font-bold text-slate-900 mb-2">{link.name}</div>
+                                        <div className="pl-4 space-y-2 border-l-2 border-slate-100 ml-1">
+                                            {link.items?.map(sub => (
+                                                <Link
+                                                    key={sub.name}
+                                                    href={sub.href}
+                                                    className="block text-sm text-slate-600 hover:text-amber-700 font-medium"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                >
+                                                    {sub.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        className="block py-2 text-sm text-slate-600 hover:text-amber-700 font-medium transition-colors"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                )
                             ))}
                         </div>
                     </div>

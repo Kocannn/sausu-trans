@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Settings, Users, Newspaper, Image as ImageIcon, FileText, Store, UserCog } from 'lucide-react';
+import { LayoutGrid, Settings, Users, Newspaper, Image as ImageIcon, FileText, Store, UserCog, Shield } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -37,6 +37,11 @@ export function AppSidebar() {
             title: 'Aparatur Desa',
             href: '/admin/officials',
             icon: Users,
+        },
+        {
+            title: 'Lembaga Desa',
+            href: '/admin/village-institutions',
+            icon: Shield,
         },
         {
             title: 'Berita & Artikel',
