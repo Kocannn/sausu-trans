@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { FormEventHandler, useState, ChangeEvent } from 'react';
 import MembersManager from './components/MembersManager';
 
+import { convertToWebP } from '@/lib/image-utils';
+
 type Member = {
     id: number;
     name: string;
@@ -43,14 +45,16 @@ export default function Edit({ institution }: Props) {
         logo: null as File | null,
     });
 
-    const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setData('logo', file);
-        if (file) {
+    const handleLogoChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0] || null;
+        if (rawFile) {
+            const webpFile = await convertToWebP(rawFile, { quality: 0.8, maxWidth: 1200 });
+            setData('logo', webpFile);
             const reader = new FileReader();
             reader.onloadend = () => setPreviewImage(reader.result as string);
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(webpFile);
         } else {
+            setData('logo', null);
             setPreviewImage(institution.logo ? `/storage/${institution.logo}` : null);
         }
     };

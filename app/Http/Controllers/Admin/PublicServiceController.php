@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PublicService;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class PublicServiceController extends Controller
 {
     public function index()
     {
         $services = PublicService::latest()->get();
+
         return Inertia::render('admin/public-services/index', [
-            'services' => $services
+            'services' => $services,
         ]);
     }
 
@@ -31,19 +32,19 @@ class PublicServiceController extends Controller
             'requirements' => 'nullable|string',
             'operating_hours' => 'nullable|string',
             'online_link' => 'nullable|url',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         PublicService::create($validated);
-        
+
         return redirect()->route('admin.public-services.index')->with('success', 'Layanan Publik berhasil ditambahkan.');
     }
 
     public function edit(PublicService $public_service)
     {
         return Inertia::render('admin/public-services/edit', [
-            'service' => $public_service
+            'service' => $public_service,
         ]);
     }
 
@@ -55,18 +56,19 @@ class PublicServiceController extends Controller
             'requirements' => 'nullable|string',
             'operating_hours' => 'nullable|string',
             'online_link' => 'nullable|url',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
         $public_service->update($validated);
-        
+
         return redirect()->route('admin.public-services.index')->with('success', 'Layanan Publik berhasil diperbarui.');
     }
 
     public function destroy(PublicService $public_service)
     {
         $public_service->delete();
+
         return redirect()->route('admin.public-services.index')->with('success', 'Layanan Publik berhasil dihapus.');
     }
 }

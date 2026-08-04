@@ -7,6 +7,8 @@ import { ArrowLeft, CheckCircle2, Image as ImageIcon, MapPin } from 'lucide-reac
 import { toast } from 'sonner';
 import { FormEventHandler, useState, ChangeEvent, lazy, Suspense, useEffect } from 'react';
 
+import { convertToWebP } from '@/lib/image-utils';
+
 const LocationPicker = lazy(() => import('@/components/LocationPicker'));
 
 export default function Create() {
@@ -27,14 +29,16 @@ export default function Create() {
         address: '',
     });
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setData('image', file);
-        if (file) {
+    const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0] || null;
+        if (rawFile) {
+            const webpFile = await convertToWebP(rawFile, { quality: 0.8, maxWidth: 1920 });
+            setData('image', webpFile);
             const reader = new FileReader();
             reader.onloadend = () => setPreviewImage(reader.result as string);
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(webpFile);
         } else {
+            setData('image', null);
             setPreviewImage(null);
         }
     };

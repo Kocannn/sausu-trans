@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\GalleryAlbum;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class GalleryAlbumController extends Controller
 {
     public function index()
     {
         $albums = GalleryAlbum::withCount('media')->latest()->get();
+
         return Inertia::render('admin/gallery-albums/index', [
-            'albums' => $albums
+            'albums' => $albums,
         ]);
     }
 
@@ -30,17 +31,17 @@ class GalleryAlbumController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-        
+
         $validated['slug'] = Str::slug($validated['name']);
         GalleryAlbum::create($validated);
-        
+
         return redirect()->route('admin.gallery-albums.index')->with('success', 'Album berhasil ditambahkan.');
     }
 
     public function edit(GalleryAlbum $gallery_album)
     {
         return Inertia::render('admin/gallery-albums/edit', [
-            'album' => $gallery_album
+            'album' => $gallery_album,
         ]);
     }
 
@@ -50,10 +51,10 @@ class GalleryAlbumController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-        
+
         $validated['slug'] = Str::slug($validated['name']);
         $gallery_album->update($validated);
-        
+
         return redirect()->route('admin.gallery-albums.index')->with('success', 'Album berhasil diperbarui.');
     }
 
@@ -65,6 +66,7 @@ class GalleryAlbumController extends Controller
             }
         }
         $gallery_album->delete();
+
         return redirect()->route('admin.gallery-albums.index')->with('success', 'Album beserta medianya berhasil dihapus.');
     }
 }

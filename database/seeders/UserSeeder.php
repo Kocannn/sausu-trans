@@ -39,10 +39,10 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        
+
         $superAdmin->assignRole($superAdminRole);
         $team->members()->syncWithoutDetaching([
-            $superAdmin->id => ['role' => TeamRole::Owner->value]
+            $superAdmin->id => ['role' => TeamRole::Owner->value],
         ]);
 
         // 4. Buat Akun Editor
@@ -55,10 +55,10 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        
+
         $editor->assignRole($editorRole);
         $team->members()->syncWithoutDetaching([
-            $editor->id => ['role' => TeamRole::Member->value]
+            $editor->id => ['role' => TeamRole::Member->value],
         ]);
     }
 }

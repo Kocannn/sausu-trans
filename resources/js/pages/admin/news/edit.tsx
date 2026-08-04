@@ -7,6 +7,8 @@ import { ArrowLeft, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { FormEventHandler, useState, ChangeEvent } from 'react';
 
+import { convertToWebP } from '@/lib/image-utils';
+
 type CategoryOption = {
     id: number;
     name: string;
@@ -41,13 +43,14 @@ export default function Edit({ news, categories = [] }: Props) {
         image: null as File | null,
     });
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setData('image', file);
-        if (file) {
+    const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0] || null;
+        if (rawFile) {
+            const webpFile = await convertToWebP(rawFile, { quality: 0.8, maxWidth: 1920 });
+            setData('image', webpFile);
             const reader = new FileReader();
             reader.onloadend = () => setPreviewImage(reader.result as string);
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(webpFile);
         }
     };
 

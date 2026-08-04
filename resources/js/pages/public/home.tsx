@@ -45,29 +45,36 @@ export default function Home({ profile, latestNews, services }: Props) {
                 </div>
             </section>
 
-            {/* Key Stats - Clean grid without cards */}
+            {/* Key Stats - Clean grid with demographics summary */}
             <section className="bg-slate-50 border-b border-slate-200">
                 <div className="max-w-6xl mx-auto px-6 lg:px-8 py-16">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div>
-                            <div className="text-4xl font-serif font-bold text-slate-900 mb-2">
-                                {profile?.demographics?.population?.total || '2,450'}
+                            <div className="text-3xl sm:text-4xl font-serif font-bold text-slate-900 mb-2">
+                                {profile?.demographics?.population?.total || '0'}
                             </div>
-                            <p className="text-sm font-medium text-slate-600 uppercase tracking-wide">Penduduk</p>
+                            <p className="text-xs sm:text-sm font-medium text-slate-600 uppercase tracking-wide">Total Penduduk</p>
                             <div className="mt-3 h-1 w-12 bg-amber-700"></div>
                         </div>
                         <div>
-                            <div className="text-4xl font-serif font-bold text-slate-900 mb-2">
-                                {profile?.demographics?.territorial?.area || '15.5'} Ha
+                            <div className="text-3xl sm:text-4xl font-serif font-bold text-slate-900 mb-2">
+                                {profile?.demographics?.population?.kk || '0'}
                             </div>
-                            <p className="text-sm font-medium text-slate-600 uppercase tracking-wide">Luas Wilayah</p>
+                            <p className="text-xs sm:text-sm font-medium text-slate-600 uppercase tracking-wide">Kepala Keluarga</p>
                             <div className="mt-3 h-1 w-12 bg-amber-700"></div>
                         </div>
                         <div>
-                            <div className="text-4xl font-serif font-bold text-slate-900 mb-2">
-                                {profile?.established_year || '1982'}
+                            <div className="text-3xl sm:text-4xl font-serif font-bold text-slate-900 mb-2">
+                                {profile?.demographics?.territorial?.area || '0'} Ha
                             </div>
-                            <p className="text-sm font-medium text-slate-600 uppercase tracking-wide">Berdiri Sejak</p>
+                            <p className="text-xs sm:text-sm font-medium text-slate-600 uppercase tracking-wide">Luas Wilayah</p>
+                            <div className="mt-3 h-1 w-12 bg-amber-700"></div>
+                        </div>
+                        <div>
+                            <div className="text-3xl sm:text-4xl font-serif font-bold text-slate-900 mb-2">
+                                {profile?.demographics?.territorial?.dusun || '0'}
+                            </div>
+                            <p className="text-xs sm:text-sm font-medium text-slate-600 uppercase tracking-wide">Wilayah Dusun</p>
                             <div className="mt-3 h-1 w-12 bg-amber-700"></div>
                         </div>
                     </div>

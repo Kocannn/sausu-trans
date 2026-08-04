@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GalleryAlbum;
+use App\Models\GalleryMedia;
+use App\Models\News;
+use App\Models\PublicService;
 use App\Models\TeamInvitation;
+use App\Models\VillageOfficial;
+use App\Models\VillagePotential;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-
-use App\Models\News;
-use App\Models\GalleryMedia;
-use App\Models\GalleryAlbum;
-use App\Models\VillageOfficial;
-use App\Models\PublicService;
-use App\Models\VillagePotential;
 
 class DashboardController extends Controller
 {

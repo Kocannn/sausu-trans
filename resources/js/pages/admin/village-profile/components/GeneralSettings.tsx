@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { convertToWebP } from '@/lib/image-utils';
 
 type Props = {
     data: any;
@@ -9,6 +10,16 @@ type Props = {
 };
 
 export default function GeneralSettings({ data, setData, errors }: Props) {
+    const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0] || null;
+        if (rawFile) {
+            const webpFile = await convertToWebP(rawFile, { quality: 0.8, maxWidth: 1200 });
+            setData('logo', webpFile);
+        } else {
+            setData('logo', null);
+        }
+    };
+
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold border-b pb-2">Informasi Umum</h3>
@@ -20,7 +31,7 @@ export default function GeneralSettings({ data, setData, errors }: Props) {
                 </div>
                 <div>
                     <Label htmlFor="logo">Logo Desa (Opsional)</Label>
-                    <Input id="logo" type="file" accept="image/*" onChange={e => setData('logo', e.target.files ? e.target.files[0] : null)} />
+                    <Input id="logo" type="file" accept="image/*" onChange={handleLogoChange} />
                     {errors.logo && <p className="text-destructive text-sm mt-1">{errors.logo}</p>}
                     <p className="text-xs text-muted-foreground mt-1">Kosongkan jika tidak ingin mengubah logo.</p>
                 </div>

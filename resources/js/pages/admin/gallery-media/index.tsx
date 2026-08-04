@@ -6,6 +6,8 @@ import { Upload, Trash2, ArrowLeft, Image as ImageIcon, Video, Folder, CheckCirc
 import { toast } from 'sonner';
 import { FormEventHandler, useState, ChangeEvent } from 'react';
 
+import { convertToWebP } from '@/lib/image-utils';
+
 type AlbumItem = {
     id: number;
     name: string;
@@ -36,15 +38,17 @@ export default function Index({ albums, media, selectedAlbum }: Props) {
 
     const [filePreview, setFilePreview] = useState<string | null>(null);
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0] || null;
         if (selected) {
-            setData('files', [selected]);
             if (selected.type.startsWith('image/')) {
+                const webpFile = await convertToWebP(selected, { quality: 0.8, maxWidth: 1920 });
+                setData('files', [webpFile]);
                 const reader = new FileReader();
                 reader.onloadend = () => setFilePreview(reader.result as string);
-                reader.readAsDataURL(selected);
+                reader.readAsDataURL(webpFile);
             } else {
+                setData('files', [selected]);
                 setFilePreview(null);
             }
         } else {

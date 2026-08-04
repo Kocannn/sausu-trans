@@ -6,25 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Models\NewsCategory;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class NewsController extends Controller
 {
     public function index()
     {
         $news = News::with(['category', 'user'])->latest()->get();
+
         return Inertia::render('admin/news/index', [
-            'news' => $news
+            'news' => $news,
         ]);
     }
 
     public function create()
     {
         $categories = NewsCategory::orderBy('name')->get();
+
         return Inertia::render('admin/news/create', [
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
@@ -50,16 +52,17 @@ class NewsController extends Controller
         }
 
         News::create($validated);
-        
+
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil ditambahkan.');
     }
 
     public function edit(News $news)
     {
         $categories = NewsCategory::orderBy('name')->get();
+
         return Inertia::render('admin/news/edit', [
             'news' => $news,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
@@ -74,8 +77,8 @@ class NewsController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
-        
-        if ($validated['status'] === 'published' && !$news->published_at) {
+
+        if ($validated['status'] === 'published' && ! $news->published_at) {
             $validated['published_at'] = now();
         } elseif ($validated['status'] === 'draft') {
             $validated['published_at'] = null;
@@ -91,7 +94,7 @@ class NewsController extends Controller
         }
 
         $news->update($validated);
-        
+
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil diperbarui.');
     }
 
@@ -101,6 +104,7 @@ class NewsController extends Controller
             Storage::disk('public')->delete($news->thumbnail);
         }
         $news->delete();
+
         return redirect()->route('admin.news.index')->with('success', 'Berita berhasil dihapus.');
     }
 }

@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\VillageInstitution;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class VillageInstitutionController extends Controller
 {
     public function index()
     {
         $institutions = VillageInstitution::latest()->get();
+
         return Inertia::render('admin/village-institutions/index', [
-            'institutions' => $institutions
+            'institutions' => $institutions,
         ]);
     }
 
@@ -46,8 +47,9 @@ class VillageInstitutionController extends Controller
     public function edit(VillageInstitution $village_institution)
     {
         $village_institution->load('members');
+
         return Inertia::render('admin/village-institutions/edit', [
-            'institution' => $village_institution
+            'institution' => $village_institution,
         ]);
     }
 
@@ -80,6 +82,7 @@ class VillageInstitutionController extends Controller
             Storage::disk('public')->delete($village_institution->logo);
         }
         $village_institution->delete();
+
         return redirect()->route('admin.village-institutions.index')->with('success', 'Lembaga Desa berhasil dihapus.');
     }
 }

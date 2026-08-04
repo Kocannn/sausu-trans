@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GalleryAlbum;
+use App\Models\GalleryMedia;
 use App\Models\News;
 use App\Models\NewsCategory;
 use App\Models\PublicService;
-use App\Models\VillageProfile;
+use App\Models\VillageInstitution;
 use App\Models\VillageOfficial;
 use App\Models\VillagePotential;
-use App\Models\VillageInstitution;
-use App\Models\GalleryAlbum;
-use App\Models\GalleryMedia;
+use App\Models\VillageProfile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,7 +25,7 @@ class PublicController extends Controller
         return Inertia::render('public/home', [
             'profile' => $profile,
             'latestNews' => $latestNews,
-            'services' => $services
+            'services' => $services,
         ]);
     }
 
@@ -34,7 +34,7 @@ class PublicController extends Controller
         $profile = VillageProfile::first();
 
         return Inertia::render('public/profile', [
-            'profile' => $profile
+            'profile' => $profile,
         ]);
     }
 
@@ -45,7 +45,7 @@ class PublicController extends Controller
 
         return Inertia::render('public/officials', [
             'profile' => $profile,
-            'officials' => $officials
+            'officials' => $officials,
         ]);
     }
 
@@ -53,13 +53,13 @@ class PublicController extends Controller
     {
         $profile = VillageProfile::first();
         // Get institutions with their members, ordered by member order
-        $institutions = VillageInstitution::with(['members' => function($query) {
+        $institutions = VillageInstitution::with(['members' => function ($query) {
             $query->orderBy('order');
         }])->latest()->get();
 
         return Inertia::render('public/institutions', [
             'profile' => $profile,
-            'institutions' => $institutions
+            'institutions' => $institutions,
         ]);
     }
 
@@ -70,7 +70,7 @@ class PublicController extends Controller
 
         return Inertia::render('public/services', [
             'profile' => $profile,
-            'services' => $services
+            'services' => $services,
         ]);
     }
 
@@ -83,7 +83,7 @@ class PublicController extends Controller
             $search = $request->query('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
@@ -101,7 +101,7 @@ class PublicController extends Controller
         }])->get();
 
         $featuredNews = null;
-        if (!$request->filled('search') && !$request->filled('category') && $news->currentPage() === 1 && count($news->items()) > 0) {
+        if (! $request->filled('search') && ! $request->filled('category') && $news->currentPage() === 1 && count($news->items()) > 0) {
             $featuredNews = $news->items()[0];
         }
 
@@ -117,7 +117,7 @@ class PublicController extends Controller
             'categories' => $categories,
             'featuredNews' => $featuredNews,
             'trendingNews' => $trendingNews,
-            'filters' => $request->only(['search', 'category'])
+            'filters' => $request->only(['search', 'category']),
         ]);
     }
 
@@ -164,7 +164,7 @@ class PublicController extends Controller
 
         return Inertia::render('public/potentials', [
             'profile' => $profile,
-            'potentials' => $potentials
+            'potentials' => $potentials,
         ]);
     }
 
@@ -184,7 +184,7 @@ class PublicController extends Controller
             'profile' => $profile,
             'albums' => $albums,
             'media' => $media,
-            'currentAlbum' => $request->album_id ?? 'all'
+            'currentAlbum' => $request->album_id ?? 'all',
         ]);
     }
 
@@ -193,7 +193,7 @@ class PublicController extends Controller
         $profile = VillageProfile::first();
 
         return Inertia::render('public/contact', [
-            'profile' => $profile
+            'profile' => $profile,
         ]);
     }
 }

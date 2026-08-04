@@ -4,18 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\VillageProfile;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class VillageProfileController extends Controller
 {
     public function edit(): Response
     {
-        $profile = VillageProfile::first() ?? new VillageProfile();
+        $profile = VillageProfile::first() ?? new VillageProfile;
+
         return Inertia::render('admin/village-profile/edit', [
-            'profile' => $profile
+            'profile' => $profile,
         ]);
     }
 
@@ -39,11 +41,11 @@ class VillageProfileController extends Controller
             'demographics' => 'nullable|array',
         ]);
 
-        $profile = VillageProfile::first() ?? new VillageProfile();
-        
+        $profile = VillageProfile::first() ?? new VillageProfile;
+
         if ($request->hasFile('logo')) {
-            if ($profile->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($profile->logo)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($profile->logo);
+            if ($profile->logo && Storage::disk('public')->exists($profile->logo)) {
+                Storage::disk('public')->delete($profile->logo);
             }
             $validated['logo'] = $request->file('logo')->store('profile', 'public');
         } else {

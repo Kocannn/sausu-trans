@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\VillagePotential;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class VillagePotentialController extends Controller
 {
     public function index()
     {
         $potentials = VillagePotential::latest()->get();
+
         return Inertia::render('admin/village-potentials/index', [
-            'potentials' => $potentials
+            'potentials' => $potentials,
         ]);
     }
 
@@ -37,7 +39,7 @@ class VillagePotentialController extends Controller
 
         $insertData = [
             'name' => $validated['title'],
-            'slug' => \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid(),
+            'slug' => Str::slug($validated['title']).'-'.uniqid(),
             'category' => $validated['category'],
             'description' => $validated['description'],
             'latitude' => $validated['latitude'] ?? null,
@@ -50,14 +52,14 @@ class VillagePotentialController extends Controller
         }
 
         VillagePotential::create($insertData);
-        
+
         return redirect()->route('admin.village-potentials.index')->with('success', 'Potensi Desa berhasil ditambahkan.');
     }
 
     public function edit(VillagePotential $village_potential)
     {
         return Inertia::render('admin/village-potentials/edit', [
-            'potential' => $village_potential
+            'potential' => $village_potential,
         ]);
     }
 
@@ -83,7 +85,7 @@ class VillagePotentialController extends Controller
         ];
 
         if ($village_potential->name !== $validated['title']) {
-            $updateData['slug'] = \Illuminate\Support\Str::slug($validated['title']) . '-' . uniqid();
+            $updateData['slug'] = Str::slug($validated['title']).'-'.uniqid();
         }
 
         if ($request->hasFile('image')) {
@@ -94,7 +96,7 @@ class VillagePotentialController extends Controller
         }
 
         $village_potential->update($updateData);
-        
+
         return redirect()->route('admin.village-potentials.index')->with('success', 'Potensi Desa berhasil diperbarui.');
     }
 
@@ -104,6 +106,7 @@ class VillagePotentialController extends Controller
             Storage::disk('public')->delete($village_potential->image);
         }
         $village_potential->delete();
+
         return redirect()->route('admin.village-potentials.index')->with('success', 'Potensi Desa berhasil dihapus.');
     }
 }

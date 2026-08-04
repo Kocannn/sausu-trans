@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\VillageOfficial;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class VillageOfficialController extends Controller
 {
     public function index()
     {
         $officials = VillageOfficial::orderBy('order')->get();
+
         return Inertia::render('admin/officials/index', [
-            'officials' => $officials
+            'officials' => $officials,
         ]);
     }
 
@@ -29,7 +30,7 @@ class VillageOfficialController extends Controller
             'name' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'photo' => 'nullable|image|max:2048',
-            'order' => 'nullable|integer|min:0'
+            'order' => 'nullable|integer|min:0',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -37,13 +38,14 @@ class VillageOfficialController extends Controller
         }
 
         VillageOfficial::create($validated);
+
         return redirect()->route('admin.officials.index')->with('success', 'Aparatur berhasil ditambahkan.');
     }
 
     public function edit(VillageOfficial $official)
     {
         return Inertia::render('admin/officials/edit', [
-            'official' => $official
+            'official' => $official,
         ]);
     }
 
@@ -53,7 +55,7 @@ class VillageOfficialController extends Controller
             'name' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'photo' => 'nullable|image|max:2048',
-            'order' => 'nullable|integer|min:0'
+            'order' => 'nullable|integer|min:0',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -66,6 +68,7 @@ class VillageOfficialController extends Controller
         }
 
         $official->update($validated);
+
         return redirect()->route('admin.officials.index')->with('success', 'Aparatur berhasil diperbarui.');
     }
 
@@ -75,6 +78,7 @@ class VillageOfficialController extends Controller
             Storage::disk('public')->delete($official->photo);
         }
         $official->delete();
+
         return redirect()->route('admin.officials.index')->with('success', 'Aparatur berhasil dihapus.');
     }
 }

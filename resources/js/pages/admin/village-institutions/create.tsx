@@ -7,6 +7,8 @@ import { ArrowLeft, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { FormEventHandler, useState, ChangeEvent } from 'react';
 
+import { convertToWebP } from '@/lib/image-utils';
+
 export default function Create() {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -18,14 +20,16 @@ export default function Create() {
         logo: null as File | null,
     });
 
-    const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setData('logo', file);
-        if (file) {
+    const handleLogoChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const rawFile = e.target.files?.[0] || null;
+        if (rawFile) {
+            const webpFile = await convertToWebP(rawFile, { quality: 0.8, maxWidth: 1200 });
+            setData('logo', webpFile);
             const reader = new FileReader();
             reader.onloadend = () => setPreviewImage(reader.result as string);
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(webpFile);
         } else {
+            setData('logo', null);
             setPreviewImage(null);
         }
     };
